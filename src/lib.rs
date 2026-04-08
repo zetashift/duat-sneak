@@ -210,7 +210,7 @@ impl Plugin for Sneak {
                 let buffer = context::current_buffer(pa);
 
                 let id = form::id_of!("cloak");
-                buffer.text_mut(pa).insert_tag(cloak_ns, .., id.to_tag(101));
+                buffer.text_mut(pa).insert_tag(cloak_ns, .., id.to_tag(239));
             } else if let Some(sneak) = switch.old.get_as::<Sneak>() {
                 let buffer = context::current_buffer(pa);
 
@@ -390,7 +390,7 @@ fn hi_labels(pa: &mut Pass, handle: &Handle, matches: &Vec<Range<usize>>) {
     text.remove_tags(*CUR_NS, ..);
 
     for (label, range) in iter_labels(matches.len()).zip(matches) {
-        let ghost = Ghost::overlay(txt!("[sneak.label:102]{label}"));
+        let ghost = Ghost::overlay(txt!("[sneak.label:239]{label}"));
         text.insert_tag(*NS, range.start, ghost);
     }
 }
@@ -414,7 +414,7 @@ fn hi_matches(pa: &mut Pass, pat: &str, handle: &Handle) -> (Vec<Range<usize>>, 
         if range.start > caret && next.is_none() {
             next = Some(i);
         }
-        parts.tags.insert(tagger, range.clone(), id.to_tag(102));
+        parts.tags.insert(tagger, range.clone(), id.to_tag(239));
     }
 
     let last = matches.len().checked_sub(1);
@@ -426,7 +426,7 @@ fn hi_cur(pa: &mut Pass, handle: &Handle, cur: Range<usize>, prev: Range<usize>)
 
     let mut text = handle.text_mut(pa);
     text.remove_tags(*CUR_NS, prev.start);
-    text.insert_tag(*CUR_NS, cur, cur_id.to_tag(103));
+    text.insert_tag(*CUR_NS, cur, cur_id.to_tag(240));
 }
 
 fn iter_labels(total: usize) -> impl Iterator<Item = char> {
