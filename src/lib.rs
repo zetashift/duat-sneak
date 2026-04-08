@@ -390,7 +390,7 @@ fn hi_labels(pa: &mut Pass, handle: &Handle, matches: &Vec<Range<usize>>) {
     text.remove_tags(*CUR_NS, ..);
 
     for (label, range) in iter_labels(matches.len()).zip(matches) {
-        let ghost = Ghost::overlay(txt!("[sneak.label:239]{label}"));
+        let ghost = Overlay::new(txt!("[sneak.label:239]{label}"));
         text.insert_tag(*NS, range.start, ghost);
     }
 }
@@ -408,13 +408,13 @@ fn hi_matches(pa: &mut Pass, pat: &str, handle: &Handle) -> (Vec<Range<usize>>, 
 
     let id = form::id_of!("sneak.match");
 
-    let tagger = *NS;
+    let ns = *NS;
     let mut next = None;
     for (i, range) in matches.iter().enumerate() {
         if range.start > caret && next.is_none() {
             next = Some(i);
         }
-        parts.tags.insert(tagger, range.clone(), id.to_tag(239));
+        parts.tags.insert(ns, range.clone(), id.to_tag(239));
     }
 
     let last = matches.len().checked_sub(1);
