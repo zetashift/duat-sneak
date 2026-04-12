@@ -140,6 +140,7 @@ pub struct Sneak {
     prev_key: KeyEvent,
     next_key: KeyEvent,
     min_for_labels: usize,
+    is_case_sensitive: bool,
 }
 
 impl Sneak {
@@ -155,6 +156,7 @@ impl Sneak {
                 Char('N').into()
             },
             min_for_labels: usize::MAX,
+            is_case_sensitive: false,
         }
     }
 
@@ -181,6 +183,14 @@ impl Sneak {
     pub fn with_len(self, len: usize) -> Self {
         assert!(len >= 1, "Can't match on 0 characters");
         Self { len, ..self }
+    }
+
+    /// Sneak with or without caring for case-insensitivity
+    pub fn with_case_sensitivity(self, case_sensitivity: bool) -> Self {
+        Self {
+            is_case_sensitive: case_sensitivity,
+            ..self
+        }
     }
 
     /// Sets a minimum number of matches to enable labels
@@ -260,7 +270,11 @@ impl Mode for Sneak {
                     }
                 };
 
-                let regex = format!("{pat}[^\n]{{{}}}", self.len - pat.chars().count());
+                let should_ci = if self.is_case_sensitive { "" } else { "(?i)" };
+                let regex = format!(
+                    "{should_ci}{pat}[^\n]{{{}}}",
+                    self.len - pat.chars().count()
+                );
                 let (matches, cur) = hi_matches(pa, &regex, &handle);
 
                 let Some(cur) = cur else {
@@ -297,7 +311,12 @@ impl Mode for Sneak {
                 let (regex, finished_filtering) = if let event!(Char(char)) = key {
                     pat.push(char);
 
-                    let regex = format!("{pat}[^\n]{{{}}}", self.len - pat.chars().count());
+                    let should_ci = if self.is_case_sensitive { "" } else { "(?i)" };
+
+                    let regex = format!(
+                        "{should_ci}{pat}[^\n]{{{}}}",
+                        self.len - pat.chars().count()
+                    );
                     (regex, pat.chars().count() >= self.len)
                 } else {
                     (pat.clone(), true)
