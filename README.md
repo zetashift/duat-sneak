@@ -33,8 +33,8 @@ setup_duat!(setup);
 use duat::prelude::*;
 use sneak::*;
 
-fn setup() {
-    plug!(Sneak::new());
+fn setup(opts: &mut Opts) {
+    plug(opts, Sneak::default());
 }
 ```
 
@@ -47,7 +47,7 @@ use duat::prelude::*;
 use sneak::*;
 
 fn setup() {
-    map::<User>("s", Sneak::new());
+    map::<User>("s", |pa: &mut _| mode::set(pa, Sneak::new()));
 }
 ```
 
